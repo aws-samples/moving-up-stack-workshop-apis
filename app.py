@@ -50,28 +50,29 @@ class DbInitHelper:
     def create_table(self):
         try:
             cursor = self.conn.cursor()
-            print("Creating table threads")
+            print("Creating table posts")
+
             cursor.execute("""
-                CREATE TABLE IF NOT EXISTS `threads`(
-                `id` int NOT NULL,
-                `title` varchar(50) NOT NULL,
-                `createdBy` int NOT NULL,
-                PRIMARY KEY (`id`)
-                );
+                CREATE TABLE IF NOT EXISTS `posts`(
+                    `thread` int NOT NULL,
+                    `text` varchar(50) NOT NULL,
+                    `user` int NOT NULL,
+                    PRIMARY KEY (`thread`)
+                    );
             """)
 
             cursor.execute("""
-                insert into `threads`(`id`,`title`,`createdBy`)
-                    values (1,"What's up with the Lich?",1);
+                insert into `posts`(`thread`,`text`,`user`)
+                    values (1,'Has anyone checked on the lich recently?', 1);
             """)
 
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-                print(f"Table <threads> already exists.")
+                print(f"Table <posts> already exists.")
             else:
                 print(err.msg)
         else:
-            print(f'Successfully inserted data into table <threads>.')
+            print(f'Successfully inserted data into table <posts>.')
 
     def get_connection(self):
         return self.conn
@@ -88,15 +89,15 @@ def get_from_db(table):
         return "SQL error running: " + str(error)
  
 
-@app.route('/api/threads', methods=['GET'], strict_slashes=False)
-def threads():
+@app.route('/api/posts', methods=['GET'], strict_slashes=False)
+def posts():
     body = {}
-    key = "threads"
+    key = "posts"
     try:
         value = red.get(key)
         if not value:
             data = get_from_db(key)
-            keys = ['id', 'title', 'createdBy']
+            keys = ['thread', 'text', 'user']
             obj = dict(zip(keys, data[0]))
             red.set(key, str(json.dumps(obj)))
 
@@ -115,13 +116,14 @@ def threads():
         return str(error), 200
 
 
-@app.route('/api/threads/clear-cache', methods=['GET'], strict_slashes=False)
+@app.route('/api/posts/clear-cache', methods=['GET'], strict_slashes=False)
 def clear_cache():
-    red.delete("threads")
+    red.delete("posts")
 
-    return "cleared threads", 200
+    return "cleared posts", 200
 
-@app.route('/api/threads/health', methods=['GET'], strict_slashes=False)
+
+@app.route('/api/posts/health', methods=['GET'], strict_slashes=False)
 def health():
     return "", 200
 
@@ -130,7 +132,7 @@ if init_db:
     conn = DbInitHelper().get_connection()
     if conn.is_connected():
         print('Successfully completed DB init.')
-        print(get_from_db('threads'))
+        print(get_from_db('posts'))
 
 
 if __name__ == '__main__':

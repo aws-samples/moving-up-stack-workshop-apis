@@ -1,9 +1,9 @@
 db = {
-    "threads": [
+    "posts": [
         {
-            "id": 2,
-            "title": "What's up with the Lich?",
-            "createdBy": 2
+            "thread": 2,
+            "text": "Has anyone checked on the lich recently?",
+            "user": 2
         }
     ]
 }

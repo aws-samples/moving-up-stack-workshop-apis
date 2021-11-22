@@ -5,13 +5,13 @@ do
       flask run
       ;;
     docker-build)
-      docker build --tag api-threads:latest .
+      docker build --tag api-posts:latest .
       ;;
     docker-run)
-      docker run --name api-threads -p 5000:5000 --rm api-threads:latest
+      docker run --name api-posts -p 5000:5000 --rm api-posts:latest
       ;;
     docker-rm)
-      docker stop api-threads && docker rm api-threads
+      docker stop api-posts && docker rm api-posts
       ;;
     rbr)
       bash ./run.sh docker-rm docker-build docker-run
