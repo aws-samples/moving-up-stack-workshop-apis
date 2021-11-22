@@ -1,0 +1,14 @@
+---
+proton: "ServiceSpec"
+pipeline:
+  dockerfile: "Dockerfile"
+  unit_test_command: "echo 'add your unit test command here'"
+  environment_account_ids: ""
+instances:
+- name: "api-threads"
+  environment: "workshop"
+  spec:
+    port: 5000
+    path: "/api/threads*"
+    health_check_path: "/api/threads/health"
+    uri_priority: 15

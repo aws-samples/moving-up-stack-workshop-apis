@@ -1,11 +1,12 @@
-## My Project
+## Modernizing Moving Up the Stack Workshop APIs
 
-TODO: Fill this README out!
 
-Be sure to:
+This is an helper repo to store microservice code for the Modernizing Moving Up the Tech Stack Workshop. 
 
-* Change the title in this README
-* Edit your repository description on GitHub
+Please see the [Main Repo](https://github.com/aws-samples/moving-up-stack-workshop) for details. 
+
+**Please Note** In this example, we use different branches to store the microservice code. This is to simplify the workshop only. Best practice is to store each microservice in its own repository. 
+
 
 ## Security
 
