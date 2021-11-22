@@ -1,10 +1,9 @@
 db = {
-    "users": [
+    "threads": [
         {
             "id": 2,
-            "username": "marceline",
-            "name": "Marceline Abadeer",
-            "bio": "1000 year old vampire queen, musician"
+            "title": "What's up with the Lich?",
+            "createdBy": 2
         }
     ]
 }

@@ -1,5 +1,4 @@
 import json
-from logging import currentframe
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -51,29 +50,28 @@ class DbInitHelper:
     def create_table(self):
         try:
             cursor = self.conn.cursor()
-            print("Creating table users")
+            print("Creating table threads")
             cursor.execute("""
-                CREATE TABLE `users` (
-                  `id` int NOT NULL,
-                  `username` varchar(50) NOT NULL,
-                  `name` varchar(50) NOT NULL,
-                  `bio` varchar(50) NOT NULL,
-                  PRIMARY KEY (`id`)
+                CREATE TABLE IF NOT EXISTS `threads`(
+                `id` int NOT NULL,
+                `title` varchar(50) NOT NULL,
+                `createdBy` int NOT NULL,
+                PRIMARY KEY (`id`)
                 );
             """)
 
             cursor.execute("""
-                insert into `users`(`id`,`username`,`name`,`bio`)
-                values (1,'marceline','Marceline Abadeer','1000 year old vampire queen, musician');
+                insert into `threads`(`id`,`title`,`createdBy`)
+                    values (1,"What's up with the Lich?",1);
             """)
 
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-                print(f"Table <users> already exists.")
+                print(f"Table <threads> already exists.")
             else:
                 print(err.msg)
         else:
-            print(f'Successfully inserted data into table <users>.')
+            print(f'Successfully inserted data into table <threads>.')
 
     def get_connection(self):
         return self.conn
@@ -90,15 +88,15 @@ def get_from_db(table):
         return "SQL error running: " + str(error)
  
 
-@app.route('/api/users', methods=['GET'], strict_slashes=False)
-def users():
+@app.route('/api/threads', methods=['GET'], strict_slashes=False)
+def threads():
     body = {}
-    key = "users"
+    key = "threads"
     try:
         value = red.get(key)
         if not value:
             data = get_from_db(key)
-            keys = ['id', 'username', 'name', 'bio']
+            keys = ['id', 'title', 'createdBy']
             obj = dict(zip(keys, data[0]))
             red.set(key, str(json.dumps(obj)))
 
@@ -116,13 +114,14 @@ def users():
         body['data'] = error
         return str(error), 200
 
-@app.route('/api/users/clear-cache', methods=['GET'], strict_slashes=False)
-def clear_cache():
-    red.delete("users")
 
-    return "cleared users", 200
-    
-@app.route('/api/users/health', methods=['GET'], strict_slashes=False)
+@app.route('/api/threads/clear-cache', methods=['GET'], strict_slashes=False)
+def clear_cache():
+    red.delete("threads")
+
+    return "cleared threads", 200
+
+@app.route('/api/threads/health', methods=['GET'], strict_slashes=False)
 def health():
     return "", 200
 
@@ -131,7 +130,7 @@ if init_db:
     conn = DbInitHelper().get_connection()
     if conn.is_connected():
         print('Successfully completed DB init.')
-        print(get_from_db('users'))
+        print(get_from_db('threads'))
 
 
 if __name__ == '__main__':
